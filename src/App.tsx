@@ -4,8 +4,8 @@ import { TrustSection, ProblemsSection, ProcessSection, TariffsSection } from '.
 import { Calculator } from './calculator/Calculator';
 import { CasesSection } from './cases/CasesSection';
 import { ReviewsSection, FaqSection, GuaranteesSection } from './sections/RestSections';
-import { Header, Footer, ContactsSection, MobileBottomNav, ScrollToTopButton } from './layout/Layout';
-import { AiWidget } from './ai/AiWidget';
+import { Header, Footer, ContactsSection, MobileBottomNav } from './layout/Layout';
+import { AiWidget } from './components/ai/AiWidget';
 
 export default function App() {
   useEffect(() => {
@@ -41,7 +41,6 @@ export default function App() {
       </main>
       <Footer />
       <MobileBottomNav />
-      <ScrollToTopButton />
       <AiWidget />
     </div>
   );

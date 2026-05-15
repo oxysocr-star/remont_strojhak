@@ -133,49 +133,6 @@ export const ContactsSection = () => (
   </section>
 );
 
-export const ScrollToTopButton = () => {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const toggleVisibility = () => {
-      if (window.scrollY > 200) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
-    };
-
-    window.addEventListener('scroll', toggleVisibility, { passive: true });
-    return () => window.removeEventListener('scroll', toggleVisibility);
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  };
-
-  return (
-    <motion.button
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ 
-        opacity: isVisible ? 1 : 0, 
-        scale: isVisible ? 1 : 0.8,
-        pointerEvents: isVisible ? 'auto' : 'none'
-      }}
-      transition={{ duration: 0.2 }}
-      onClick={scrollToTop}
-      className="fixed bottom-24 lg:bottom-8 right-4 lg:right-8 w-12 h-12 bg-[#D5FF00] border-2 border-black flex items-center justify-center brutal-shadow z-50 hover:bg-black hover:text-[#D5FF00] transition-colors"
-      aria-label="Scroll to top"
-    >
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-        <path d="m18 15-6-6-6 6"/>
-      </svg>
-    </motion.button>
-  );
-};
-
 export const Footer = () => (
   <footer className="bg-black text-white py-12 border-t-4 border-[#D5FF00]">
     <div className="container flex flex-col md:flex-row justify-between items-center gap-6">
