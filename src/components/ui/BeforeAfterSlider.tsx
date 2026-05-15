@@ -23,31 +23,30 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({ beforeImag
 
   return (
     <div 
-      className="relative w-full h-64 border-b-4 border-black overflow-hidden select-none focus-within:ring-4 focus-within:ring-[#D5FF00] focus-within:ring-offset-2"
+      className="relative w-full h-64 border-b-4 border-black overflow-hidden select-none has-[:focus-visible]:ring-4 has-[:focus-visible]:ring-[#D5FF00] has-[:focus-visible]:ring-offset-2"
       ref={containerRef}
       onMouseMove={onMouseMove}
       onTouchMove={onTouchMove}
     >
-      <img src={afterImage} alt="Интерьер после ремонта" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover" />
-      <div className="absolute top-4 right-4 bg-[#D5FF00] text-black px-2 py-1 font-bold uppercase text-xs brutal-border pointer-events-none" aria-hidden="true">После</div>
+      <img src={afterImage} alt="После" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover" />
+      <div className="absolute top-4 right-4 bg-[#D5FF00] text-black px-2 py-1 font-bold uppercase text-xs brutal-border pointer-events-none">После</div>
       
       <div 
         className="absolute inset-0 h-full overflow-hidden border-r-4 border-black z-10"
         style={{ width: `${position}%` }}
       >
-        <img src={beforeImage} alt="Интерьер до ремонта" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover max-w-none grayscale" style={{ width: containerRef.current?.offsetWidth || '100vw' }} />
-        <div className="absolute top-4 left-4 bg-white text-black px-2 py-1 font-bold uppercase text-xs brutal-border pointer-events-none" aria-hidden="true">До</div>
+        <img src={beforeImage} alt="До" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover max-w-none grayscale" style={{ width: containerRef.current?.offsetWidth || '100vw' }} />
+        <div className="absolute top-4 left-4 bg-white text-black px-2 py-1 font-bold uppercase text-xs brutal-border pointer-events-none">До</div>
       </div>
 
       <input
         type="range"
         min={0}
         max={100}
-        step={1}
         value={position}
         onChange={(e) => setPosition(Number(e.target.value))}
         className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-20 outline-none"
-        aria-label="Слайдер сравнения до и после ремонта. Используйте стрелки для перемещения."
+        aria-label="Слайдер сравнения до и после ремонта"
       />
       
       <div 

@@ -9,7 +9,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className = '', variant = 'primary', size = 'md', children, ...props }, ref) => {
-    let baseStyle = "flex items-center justify-center font-bold font-display uppercase transition-all brutal-border focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-black ";
+    let baseStyle = "flex items-center justify-center font-bold font-display uppercase transition-all brutal-border ";
     
     if (variant === 'primary') {
       baseStyle += "bg-[#D5FF00] text-black brutal-shadow brutal-shadow-hover brutal-shadow-active hover:bg-black hover:text-[#D5FF00] ";

@@ -1,18 +1,16 @@
 import React from 'react';
-import { motion, useReducedMotion } from 'motion/react';
+import { motion } from 'motion/react';
 import { Button } from '../components/ui/Button';
 import { trackEvent } from '../lib/analytics';
 
 export const HeroSection = () => {
-  const shouldReduceMotion = useReducedMotion();
-
   return (
     <section className="pt-24 lg:pt-32 pb-16 lg:pb-24 overflow-hidden relative">
       <div className="container relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div>
             <motion.h1 
-              initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
               className="font-display font-bold uppercase leading-[1.1] mb-6 text-4xl sm:text-5xl lg:text-6xl"
@@ -24,7 +22,7 @@ export const HeroSection = () => {
             </motion.h1>
             
             <motion.p 
-              initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0 }}
+              initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-lg md:text-xl font-medium mb-10 max-w-lg text-gray-800"
@@ -41,7 +39,6 @@ export const HeroSection = () => {
               </Button>
               <Button variant="secondary" size="lg" onClick={() => {
                 trackEvent('secondary_cta_click');
-                trackEvent('scroll_to_cases');
                 document.getElementById('cases')?.scrollIntoView({ behavior: 'smooth' });
               }}>
                 ПОСМОТРЕТЬ КЕЙСЫ
