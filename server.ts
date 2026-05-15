@@ -60,7 +60,7 @@ app.post("/api/ai/chat", async (req, res) => {
 
       if (!apiKey) {
         console.error('ERROR: GEMINI_API_KEY is missing');
-        return res.status(500).json({ error: "Gemini API key is not configured" });
+        return res.status(500).json({ error: "Внимание! Ключ GEMINI_API_KEY не задан в переменных окружения на сервере (Vercel). Пожалуйста, добавьте его в настройках проекта Vercel.", answer: "Внимание! Ключ GEMINI_API_KEY не задан в переменных окружения на сервере (Vercel). Пожалуйста, добавьте его в настройках проекта Vercel.", suggestedActions: ["Перейти в Vercel"] });
       }
 
       // Prepare contents for generateContent

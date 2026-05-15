@@ -75,7 +75,22 @@ export const AiChatWindow: React.FC<AiChatWindowProps> = ({ onClose, sessionId }
         body: JSON.stringify(request)
       });
       
-      const data: AiChatResponse = await response.json();
+      let data: AiChatResponse = {} as AiChatResponse;
+      try {
+        const textResponse = await response.text();
+        try {
+          data = JSON.parse(textResponse);
+        } catch (e) {
+          if (response.status === 504) {
+             throw new Error('Время ожидания ответа истекло (Vercel Timeout).');
+          }
+          throw new Error('Сервер вернул неправильный формат ответа: ' + textResponse.substring(0, 50));
+        }
+      } catch (err: any) {
+        setMessages(prev => [...prev, { role: 'model', text: err.message || 'Произошла непредвиденная ошибка связи с сервером.' }]);
+        setIsTyping(false);
+        return;
+      }
 
       if (!response.ok) {
         setMessages(prev => [...prev, { 
