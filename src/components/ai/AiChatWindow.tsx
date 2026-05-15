@@ -58,7 +58,10 @@ export const AiChatWindow: React.FC = () => {
         })
       });
       
-      if (!response.ok) throw new Error('API Error');
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || `HTTP ${response.status}`);
+      }
       
       const data = await response.json();
       setMessages(prev => [...prev, { role: 'ai', text: data.answer || 'Произошла ошибка связи с ИИ.' }]);
@@ -70,8 +73,8 @@ export const AiChatWindow: React.FC = () => {
       if (data.answer && (data.answer.toLowerCase().includes('вас зовут') || data.answer.toLowerCase().includes('номер') || data.answer.toLowerCase().includes('менеджер'))) {
         setShowLeadForm(true);
       }
-    } catch (e) {
-      setMessages(prev => [...prev, { role: 'ai', text: 'К сожалению, сервис временно недоступен.' }]);
+    } catch (e: any) {
+      setMessages(prev => [...prev, { role: 'ai', text: `К сожалению, сервис временно недоступен. Ошибка: ${e.message}` }]);
     } finally {
       setIsLoading(false);
     }
