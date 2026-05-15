@@ -8,7 +8,7 @@ import { useAiStore, useCalculatorStore, useUiStore } from '../../store';
 
 export const AiChatWindow: React.FC = () => {
   const { isOpen, setIsOpen, sessionId } = useAiStore();
-  const { area, tariff, objectType, step: calcStep } = useCalculatorStore();
+  const { area, tariff, objectType } = useCalculatorStore();
   const { activeSection } = useUiStore();
   
   const [messages, setMessages] = useState<{ role: 'user' | 'ai', text: string }[]>([]);
@@ -54,11 +54,7 @@ export const AiChatWindow: React.FC = () => {
           message: text,
           pageContext: activeSection,
           history: messages,
-          leadData: { 
-            area: calcStep > 2 ? area : undefined, 
-            repairType: tariff, 
-            objectType 
-          }
+          leadData: { area, repairType: tariff, objectType }
         })
       });
       
@@ -93,7 +89,7 @@ export const AiChatWindow: React.FC = () => {
           source: 'ai_assistant',
           name: data.name,
           phone: data.phone,
-          area: calcStep > 2 ? area : undefined,
+          area,
           objectType,
           repairType: tariff
         })
@@ -118,7 +114,7 @@ export const AiChatWindow: React.FC = () => {
           style={{ height: 'min(650px, calc(100vh - 100px))' }}
         >
           {/* Header */}
-          <div className="bg-black text-white p-4 flex justify-between items-center border-b-4 border-white shrink-0">
+          <div className="bg-black text-white p-4 flex justify-between items-center border-b-4 border-white">
             <div className="font-bold uppercase tracking-widest flex items-center gap-3">
               <span className="w-3 h-3 block bg-[#D5FF00] animate-pulse"></span>
               AI Ассистент
@@ -153,7 +149,7 @@ export const AiChatWindow: React.FC = () => {
           </div>
           
           {/* Input field */}
-          <div className="p-4 border-t-4 border-white bg-black flex gap-2 shrink-0">
+          <div className="p-4 border-t-4 border-white bg-black flex gap-2">
             <input 
               type="text" 
               value={input}

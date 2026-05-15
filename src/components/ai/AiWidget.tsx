@@ -53,7 +53,7 @@ export const AiWidget: React.FC = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, scale: 0 }}
             onClick={() => { setIsOpen(true); setIsVisible(false); }}
-            className="fixed bottom-24 right-6 md:bottom-12 md:right-10 w-16 h-16 bg-[#D5FF00] border-4 border-black flex items-center justify-center rounded-none z-50 text-black font-bold text-2xl brutal-shadow transition-transform active:translate-y-1 active:translate-x-1 hover:-translate-y-1 hover:-translate-x-1"
+            className="fixed bottom-6 right-6 md:bottom-10 md:right-10 w-16 h-16 bg-[#D5FF00] border-4 border-black flex items-center justify-center rounded-none z-50 text-black font-bold text-2xl brutal-shadow transition-transform active:translate-y-1 active:translate-x-1 hover:-translate-y-1 hover:-translate-x-1"
           >
             AI
           </motion.button>
