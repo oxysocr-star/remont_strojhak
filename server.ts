@@ -42,19 +42,18 @@ const ai = new GoogleGenAI({
   }
 });
 
-async function startServer() {
-  const app = express();
-  const PORT = 3000;
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-  app.use(express.json());
+app.use(express.json());
 
-  // API endpoints
-  app.get("/api/health", (req, res) => {
-    res.json({ status: "ok" });
-  });
+// API endpoints
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok" });
+});
 
-  // AI Chat endpoint
-  app.post("/api/ai/chat", async (req, res) => {
+// AI Chat endpoint
+app.post("/api/ai/chat", async (req, res) => {
     try {
       const { sessionId, message, history = [] } = req.body;
       const apiKey = process.env.GEMINI_API_KEY;
@@ -193,23 +192,28 @@ async function startServer() {
   });
 
   // Vite middleware for development
-  if (process.env.NODE_ENV !== "production") {
-    const vite = await createViteServer({
+  if (process.env.NODE_ENV !== "production" && !process.env.VERCEL) {
+    createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
+    }).then((vite) => {
+      app.use(vite.middlewares);
+      app.listen(PORT, () => {
+        console.log(`Server running on http://localhost:${PORT}`);
+      });
     });
-    app.use(vite.middlewares);
   } else {
-    const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
-    app.get('*all', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
-    });
+    // Only serve static files if not on Vercel, as Vercel handles static routing directly
+    if (!process.env.VERCEL) {
+      const distPath = path.join(process.cwd(), 'dist');
+      app.use(express.static(distPath));
+      app.get('*', (req, res) => {
+        res.sendFile(path.join(distPath, 'index.html'));
+      });
+      app.listen(PORT, () => {
+        console.log(`Server running on http://localhost:${PORT}`);
+      });
+    }
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-  });
-}
-
-startServer();
+export default app;

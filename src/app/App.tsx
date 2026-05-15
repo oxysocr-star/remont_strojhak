@@ -40,7 +40,7 @@ export default function App() {
       <MobileBottomNav />
       <AiWidget />
       <Header />
-      <main className="text-gray-900 pb-24 lg:pb-0">
+      <main className="text-gray-900">
         <HeroSection />
         <TrustSection />
         <ProblemsSection />
