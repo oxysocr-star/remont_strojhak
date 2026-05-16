@@ -5,6 +5,7 @@ import { AiTypingIndicator } from './AiTypingIndicator';
 import { AiQuickReplies } from './AiQuickReplies';
 import { AiLeadForm } from './AiLeadForm';
 import { useAiStore, useCalculatorStore, useUiStore } from '../../store';
+import { trackEvent } from '../../lib/analytics';
 
 export const AiChatWindow: React.FC = () => {
   const { isOpen, setIsOpen, sessionId } = useAiStore();
@@ -32,6 +33,8 @@ export const AiChatWindow: React.FC = () => {
 
   const handleSend = async (text: string) => {
     if (!text.trim()) return;
+    
+    trackEvent('ai_message_sent', { message: text });
     
     const newMessages: { role: 'user' | 'ai', text: string }[] = [...messages, { role: 'user', text }];
     setMessages(newMessages);
@@ -80,6 +83,7 @@ export const AiChatWindow: React.FC = () => {
     setShowLeadForm(false);
     setMessages(prev => [...prev, { role: 'user', text: `Меня зовут ${data.name}, телефон ${data.phone}` }]);
     setIsLoading(true);
+    trackEvent('ai_lead_created', { name: data.name, phone: data.phone });
     try {
       await fetch('/api/leads', {
         method: 'POST',
@@ -155,13 +159,15 @@ export const AiChatWindow: React.FC = () => {
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleSend(input)}
               placeholder="Ваш вопрос..."
+              aria-label="Введите сообщение для AI ассистеннта"
               disabled={isLoading || showLeadForm}
-              className="flex-1 p-3 border-4 border-white bg-black text-white font-bold outline-none focus:bg-[#D5FF00] focus:text-black focus:border-[#D5FF00] disabled:opacity-50"
+              className="flex-1 p-3 border-4 border-white bg-black text-white font-bold outline-none focus:bg-[#D5FF00] focus:text-black focus:border-[#D5FF00] disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white"
             />
             <button 
               onClick={() => handleSend(input)}
+              aria-label="Отправить сообщение"
               disabled={isLoading || showLeadForm || !input.trim()}
-              className="px-4 py-3 bg-[#D5FF00] border-4 border-[#D5FF00] font-bold text-black uppercase transition-transform active:translate-y-1 active:translate-x-1 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[4px_4px_0_0_#fff] disabled:opacity-50 disabled:transform-none disabled:shadow-none"
+              className="px-4 py-3 bg-[#D5FF00] border-4 border-[#D5FF00] font-bold text-black uppercase transition-transform active:translate-y-1 active:translate-x-1 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[4px_4px_0_0_#fff] disabled:opacity-50 disabled:transform-none disabled:shadow-none focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white"
             >
               &gt;
             </button>

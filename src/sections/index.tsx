@@ -229,31 +229,31 @@ export const TariffsSection = () => {
               <div className="space-y-4 flex-1 mb-8">
                 <div className="flex justify-between border-b border-gray-800 pb-2">
                   <span className="text-sm">Черновые работы</span>
-                  <span className="text-[#D5FF00]">✓</span>
+                  <span className="text-[#D5FF00]" aria-hidden="true">✓</span>
                 </div>
                 <div className="flex justify-between border-b border-gray-800 pb-2">
                   <span className="text-sm">Чистовая отделка</span>
-                  <span className="text-[#D5FF00]">✓</span>
+                  <span className="text-[#D5FF00]" aria-hidden="true">✓</span>
                 </div>
                 <div className="flex justify-between border-b border-gray-800 pb-2">
                   <span className="text-sm">Видеоотчеты</span>
-                  <span className="text-[#D5FF00]">✓</span>
+                  <span className="text-[#D5FF00]" aria-hidden="true">✓</span>
                 </div>
                 <div className="flex justify-between border-b border-gray-800 pb-2">
                   <span className="text-sm">Подбор материалов</span>
-                  <span className={t.features.materials ? "text-[#D5FF00]" : "text-gray-500"}>{t.features.materials === true ? '✓' : (t.features.materials === 'partial' ? 'Частично' : '—')}</span>
+                  <span className={t.features.materials ? "text-[#D5FF00]" : "text-gray-500"} aria-hidden={t.features.materials === true || !t.features.materials ? 'true' : 'false'}>{t.features.materials === true ? '✓' : (t.features.materials === 'partial' ? 'Частично' : '—')}</span>
                 </div>
                 <div className="flex justify-between border-b border-gray-800 pb-2">
                   <span className="text-sm">Дизайн-сопровождение</span>
-                  <span className={t.features.design ? "text-[#D5FF00]" : "text-gray-500"}>{t.features.design === true ? '✓' : (t.features.design === 'partial' ? 'Частично' : '—')}</span>
+                  <span className={t.features.design ? "text-[#D5FF00]" : "text-gray-500"} aria-hidden={t.features.design === true || !t.features.design ? 'true' : 'false'}>{t.features.design === true ? '✓' : (t.features.design === 'partial' ? 'Частично' : '—')}</span>
                 </div>
                 <div className="flex justify-between border-b border-gray-800 pb-2">
                   <span className="text-sm">Авторский надзор</span>
-                  <span className={t.features.supervision ? "text-[#D5FF00]" : "text-gray-500"}>{t.features.supervision ? '✓' : '—'}</span>
+                  <span className={t.features.supervision ? "text-[#D5FF00]" : "text-gray-500"} aria-hidden="true">{t.features.supervision ? '✓' : '—'}</span>
                 </div>
                 <div className="flex justify-between border-b border-gray-800 pb-2">
                   <span className="text-sm">Сложная инженерия</span>
-                  <span className={t.features.engineering ? "text-[#D5FF00]" : "text-gray-500"}>{t.features.engineering ? '✓' : '—'}</span>
+                  <span className={t.features.engineering ? "text-[#D5FF00]" : "text-gray-500"} aria-hidden="true">{t.features.engineering ? '✓' : '—'}</span>
                 </div>
               </div>
               

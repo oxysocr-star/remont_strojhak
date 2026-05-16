@@ -31,22 +31,26 @@ export const Calculator = () => {
     trackEvent('calculator_completed', { propertyType, area, objectType, tariff, timeframe: t });
   };
 
+  const [status, setStatus] = React.useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     trackEvent('contact_form_submitted', { source: 'calculator' });
     const target = e.target as any;
     const phone = target[0].value;
     
+    setStatus('loading');
     try {
-      await fetch('/api/lead', {
+      const res = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone, propertyType, area, objectType, tariff, timeframe })
       });
-      alert('Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.');
+      if (!res.ok) throw new Error();
+      setStatus('success');
       target.reset();
     } catch(e) {
-      alert('Произошла ошибка, попробуйте позднее.');
+      setStatus('error');
     }
   };
 
@@ -85,21 +89,23 @@ export const Calculator = () => {
             {step === 2 && (
               <div className="animate-in fade-in slide-in-from-bottom-4">
                 <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-xl font-bold">Площадь (м²)</h3>
+                  <label htmlFor="area-input" className="text-xl font-bold block">Площадь (м²)</label>
                   <input 
+                    id="area-input"
                     type="number"
                     min="20" max="250"
                     aria-label="Ввести площадь вручную"
                     value={area}
                     onChange={e => setArea(Number(e.target.value))}
-                    className="w-24 p-2 text-right border-2 border-black font-bold focus:bg-[#D5FF00]/20"
+                    className="w-24 p-2 text-right border-2 border-black font-bold focus:bg-[#D5FF00]/20 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-black"
                   />
                 </div>
                 <input 
+                  id="area-range"
                   type="range" min="20" max="250" value={area} 
                   aria-label="Выбрать площадь ползунком"
                   onChange={e => setArea(Number(e.target.value))}
-                  className="w-full accent-black mb-8 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                  className="w-full accent-black mb-8 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-black"
                 />
                 <Button onClick={handleNext} className="w-full sm:w-auto">Далее</Button>
               </div>
@@ -171,11 +177,21 @@ export const Calculator = () => {
                     </div>
                     <p className="text-sm mb-6 font-medium bg-yellow-200 p-2 border border-black inline-block">Чтобы получить точную смету, нужен замер объекта.</p>
                     <form onSubmit={handleSubmit}>
-                      <label className="block text-sm font-bold uppercase mb-2">Куда прислать расчет?</label>
-                      <input type="tel" placeholder="+7 (999) 000-00-00" aria-label="Номер телефона для получения сметы" className="w-full p-4 border-2 border-black font-bold mb-4 bg-white" required 
+                      <label htmlFor="calc-phone-input" className="block text-sm font-bold uppercase mb-2">Куда прислать расчет?</label>
+                      <input id="calc-phone-input" type="tel" placeholder="+7 (999) 000-00-00" aria-label="Номер телефона для получения сметы" className="w-full p-4 border-2 border-black font-bold mb-4 bg-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-black" required 
                              onChange={() => trackEvent('contact_form_started', { source: 'calculator' })} />
-                      <Button type="submit" variant="primary" className="w-full">
-                        ПОЛУЧИТЬ ТОЧНУЮ СМЕТУ
+                      {status === 'error' && (
+                        <div className="text-red-600 font-bold mb-4 text-sm" role="alert">
+                          Произошла ошибка, попробуйте позднее.
+                        </div>
+                      )}
+                      {status === 'success' && (
+                        <div className="text-green-700 font-bold mb-4 text-sm bg-green-100 p-2 border-2 border-green-700" role="alert">
+                          Заявка отправлена! Ожидайте звонка.
+                        </div>
+                      )}
+                      <Button type="submit" variant="primary" className="w-full" disabled={status === 'loading'}>
+                        {status === 'loading' ? 'ОТПРАВЛЯЕМ...' : 'ПОЛУЧИТЬ ТОЧНУЮ СМЕТУ'}
                       </Button>
                     </form>
                     <button onClick={reset} className="text-xs uppercase font-bold mt-4 underline opacity-50 mx-auto block">Начать заново</button>

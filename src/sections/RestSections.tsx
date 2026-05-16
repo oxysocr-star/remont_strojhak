@@ -105,7 +105,7 @@ export const FaqSection = () => {
                   aria-expanded={openId === faq.id}
                 >
                   {faq.question}
-                  <span className="text-2xl ml-4">{openId === faq.id ? '−' : '+'}</span>
+                  <span className="text-2xl ml-4" aria-hidden="true">{openId === faq.id ? '−' : '+'}</span>
                 </button>
                 {openId === faq.id && (
                   <div className="p-6 pt-0 font-medium text-black border-t-2 border-black/20">

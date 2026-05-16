@@ -98,40 +98,64 @@ export const MobileBottomNav = () => {
   );
 };
 
-export const ContactsSection = () => (
-  <section className="py-24 bg-white" id="contacts">
-    <div className="container">
-       <div className="max-w-2xl mx-auto text-center brutal-border brutal-shadow p-8 lg:p-12 bg-gray-50">
-          <h2 className="text-3xl md:text-4xl font-display font-bold uppercase mb-6">
-            Готовы начать? <br/> Оставьте заявку
-          </h2>
-          <p className="font-medium mb-8">Наш менеджер свяжется с вами, чтобы обсудить ваш объект и ответить на вопросы.</p>
-          <form className="flex flex-col gap-4" onSubmit={async (e) => { 
-            e.preventDefault(); 
-            trackEvent('contact_form_submitted', { source: 'footer_contacts' });
-            const target = e.target as any;
-            try {
-              await fetch('/api/lead', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: target[0].value, phone: target[1].value })
-              });
-              alert('Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.');
-              target.reset();
-            } catch(error) {
-              alert('Произошла ошибка, попробуйте позднее.');
-            }
-          }}>
-            <input type="text" placeholder="Имя" aria-label="Имя" className="p-4 border-2 border-black font-bold focus:bg-[#D5FF00]/10" required 
-              onChange={() => trackEvent('contact_form_started', { source: 'footer_contacts' })} />
-            <input type="tel" placeholder="Телефон" aria-label="Телефон" className="p-4 border-2 border-black font-bold focus:bg-[#D5FF00]/10" required 
-              onChange={() => trackEvent('contact_form_started', { source: 'footer_contacts' })} />
-            <Button size="lg" type="submit">ОСТАВИТЬ ЗАЯВКУ</Button>
-          </form>
-       </div>
-    </div>
-  </section>
-);
+export const ContactsSection = () => {
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+
+  return (
+    <section className="py-24 bg-white" id="contacts">
+      <div className="container">
+         <div className="max-w-2xl mx-auto text-center brutal-border brutal-shadow p-8 lg:p-12 bg-gray-50">
+            <h2 className="text-3xl md:text-4xl font-display font-bold uppercase mb-6">
+              Готовы начать? <br/> Оставьте заявку
+            </h2>
+            <p className="font-medium mb-8">Наш менеджер свяжется с вами, чтобы обсудить ваш объект и ответить на вопросы.</p>
+            <form className="flex flex-col gap-4" onSubmit={async (e) => { 
+              e.preventDefault(); 
+              trackEvent('contact_form_submitted', { source: 'footer_contacts' });
+              const target = e.target as any;
+              setStatus('loading');
+              try {
+                const res = await fetch('/api/leads', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ name: target['name'].value, phone: target['phone'].value })
+                });
+                if (!res.ok) throw new Error();
+                setStatus('success');
+                target.reset();
+              } catch(error) {
+                setStatus('error');
+              }
+            }}>
+              <div className="text-left w-full">
+                <label htmlFor="name-input" className="block text-sm font-bold uppercase mb-1">Имя</label>
+                <input id="name-input" name="name" type="text" placeholder="Иван" aria-label="Имя" className="w-full p-4 border-2 border-black font-bold focus:bg-[#D5FF00]/10 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-black" required 
+                  onChange={() => trackEvent('contact_form_started', { source: 'footer_contacts' })} />
+              </div>
+              <div className="text-left w-full">
+                <label htmlFor="phone-input" className="block text-sm font-bold uppercase mb-1">Телефон</label>
+                <input id="phone-input" name="phone" type="tel" placeholder="+7 (999) 000-00-00" aria-label="Телефон" className="w-full p-4 border-2 border-black font-bold focus:bg-[#D5FF00]/10 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-black" required 
+                  onChange={() => trackEvent('contact_form_started', { source: 'footer_contacts' })} />
+              </div>
+              {status === 'error' && (
+                <div className="text-red-600 font-bold text-center mt-2" role="alert">
+                  Произошла ошибка, пожалуйста, попробуйте позднее.
+                </div>
+              )}
+              {status === 'success' && (
+                <div className="text-green-700 font-bold text-center mt-2 p-2 bg-green-100 border-2 border-green-700" role="alert">
+                  Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.
+                </div>
+              )}
+              <Button size="lg" type="submit" className="mt-2" disabled={status === 'loading'}>
+                {status === 'loading' ? 'ОТПРАВЛЯЕМ...' : 'ОСТАВИТЬ ЗАЯВКУ'}
+              </Button>
+            </form>
+         </div>
+      </div>
+    </section>
+  );
+};
 
 export const Footer = () => (
   <footer className="bg-black text-white py-12 border-t-4 border-[#D5FF00]">

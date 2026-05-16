@@ -47,10 +47,10 @@ export const HeroSection = () => {
             
             {/* Trust line */}
             <div className="grid grid-cols-2 gap-y-3 gap-x-4 text-sm font-bold uppercase tracking-tight">
-              <div className="flex items-center gap-2"><span className="text-[#D5FF00] text-xl">✓</span> Смета в договоре</div>
-              <div className="flex items-center gap-2"><span className="text-[#D5FF00] text-xl">✓</span> Видеоотчеты с объекта</div>
-              <div className="flex items-center gap-2"><span className="text-[#D5FF00] text-xl">✓</span> Связь с прорабом 24/7</div>
-              <div className="flex items-center gap-2"><span className="text-[#D5FF00] text-xl">✓</span> Гарантия на работы</div>
+              <div className="flex items-center gap-2"><span className="text-[#D5FF00] text-xl" aria-hidden="true">✓</span> Смета в договоре</div>
+              <div className="flex items-center gap-2"><span className="text-[#D5FF00] text-xl" aria-hidden="true">✓</span> Видеоотчеты с объекта</div>
+              <div className="flex items-center gap-2"><span className="text-[#D5FF00] text-xl" aria-hidden="true">✓</span> Связь с прорабом 24/7</div>
+              <div className="flex items-center gap-2"><span className="text-[#D5FF00] text-xl" aria-hidden="true">✓</span> Гарантия на работы</div>
             </div>
           </div>
           
