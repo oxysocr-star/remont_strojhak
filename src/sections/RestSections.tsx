@@ -96,7 +96,7 @@ export const FaqSection = () => {
                 className={`brutal-border ${openId === faq.id ? 'bg-[#D5FF00]' : 'bg-white hover:bg-gray-50'}`}
               >
                 <button 
-                  className="w-full text-left p-6 font-bold font-display uppercase text-lg flex justify-between items-center"
+                  className="w-full text-left px-5 py-4 md:px-8 md:py-6 font-bold font-display uppercase text-base md:text-xl flex justify-between items-center"
                   onClick={() => {
                     const newId = openId === faq.id ? '' : faq.id;
                     setOpenId(newId);
@@ -104,12 +104,14 @@ export const FaqSection = () => {
                   }}
                   aria-expanded={openId === faq.id}
                 >
-                  {faq.question}
-                  <span className="text-2xl ml-4" aria-hidden="true">{openId === faq.id ? '−' : '+'}</span>
+                  <span className="pr-4">{faq.question}</span>
+                  <span className="text-2xl md:text-4xl ml-auto flex-shrink-0 leading-none" aria-hidden="true">{openId === faq.id ? '−' : '+'}</span>
                 </button>
                 {openId === faq.id && (
-                  <div className="p-6 pt-0 font-medium text-black border-t-2 border-black/20">
-                    {faq.answer}
+                  <div className="px-5 pb-5 md:px-8 md:pb-6 font-medium text-sm md:text-base text-black">
+                    <div className="border-t-2 border-black/20 pt-4 md:pt-6">
+                      {faq.answer}
+                    </div>
                   </div>
                 )}
               </motion.div>

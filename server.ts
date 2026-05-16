@@ -104,6 +104,12 @@ ${siteKnowledge}
       res.json(parsed);
     } catch (error: any) {
       console.error('AI Error:', error);
+      if (error?.status === 429 || (error?.message && error.message.includes('429')) || (error?.status === 'RESOURCE_EXHAUSTED') || (error?.message && error.message.includes('RESOURCE_EXHAUSTED')) || (error?.message && error.message.includes('Quota'))) {
+        return res.json({
+          answer: "К сожалению, AI-помощник временно недоступен из-за высокой нагрузки. Пожалуйста, попробуйте задать вопрос чуть позже, либо воспользуйтесь формой заявки на сайте.",
+          suggestedActions: ["Оставить заявку", "Понятно"]
+        });
+      }
       res.status(500).json({ error: error.message || 'Error generating AI response' });
     }
   });

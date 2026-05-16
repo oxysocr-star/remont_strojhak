@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
+import { Share2 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { trackEvent } from '../lib/analytics';
 
@@ -30,7 +31,7 @@ export const HeroSection = () => {
               Фиксируем смету и сроки в договоре. Показываем ход работ в видеоотчетах. Сдаем объект по понятному графику.
             </motion.p>
             
-            <div className="flex flex-col sm:flex-row gap-4 mb-12">
+            <div className="flex flex-col sm:flex-row flex-wrap gap-4 mb-12">
               <Button size="lg" onClick={() => {
                 trackEvent('hero_cta_click');
                 document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' });
@@ -43,6 +44,25 @@ export const HeroSection = () => {
               }}>
                 ПОСМОТРЕТЬ КЕЙСЫ
               </Button>
+              <Button variant="outline" size="lg" onClick={async () => {
+                trackEvent('share_click');
+                try {
+                  if (navigator.share) {
+                    await navigator.share({
+                      title: 'СтройХак - Ремонт без срывов и доплат',
+                      text: 'Ремонт вашей квартиры под ключ: с понятной сметой, подбором материалов и отчетами.',
+                      url: window.location.href,
+                    });
+                  } else {
+                    await navigator.clipboard.writeText(window.location.href);
+                    alert('Ссылка скопирована в буфер обмена!');
+                  }
+                } catch (error) {
+                  console.error('Error sharing', error);
+                }
+              }} title="Поделиться" className="!px-4">
+                <Share2 className="w-6 h-6" />
+              </Button>
             </div>
             
             {/* Trust line */}
@@ -54,22 +74,24 @@ export const HeroSection = () => {
             </div>
           </div>
           
-          <div className="relative">
-             <div className="brutal-border brutal-shadow p-2 bg-white relative z-10 w-full h-[400px] lg:h-[500px]">
-                <img 
-                  src="https://images.unsplash.com/photo-1581141849291-1125c7b692b5?q=80&w=1000&auto=format&fit=crop" 
-                  alt="Ремонт квартиры" 
-                  fetchPriority="high"
-                  decoding="async"
-                  className="w-full h-full object-cover grayscale opacity-90"
-                />
-                <div className="absolute bottom-6 right-6 bg-[#D5FF00] text-black p-4 brutal-border brutal-shadow transform rotate-3">
+          <div className="relative group">
+             <div className="brutal-border brutal-shadow p-2 bg-white relative z-10 w-full h-[400px] lg:h-[500px] cursor-default transition-transform duration-500 group-hover:-translate-y-1 group-hover:-translate-x-1">
+                <div className="w-full h-full overflow-hidden relative">
+                  <img 
+                    src="https://images.unsplash.com/photo-1581141849291-1125c7b692b5?q=80&w=1000&auto=format&fit=crop" 
+                    alt="Ремонт квартиры" 
+                    fetchPriority="high"
+                    decoding="async"
+                    className="w-full h-full object-cover grayscale opacity-90 transition-all duration-700 ease-out group-hover:scale-105 group-hover:grayscale-0 group-hover:opacity-100"
+                  />
+                </div>
+                <div className="absolute bottom-6 right-6 bg-[#D5FF00] text-black p-4 brutal-border brutal-shadow transform rotate-3 transition-all duration-500 group-hover:rotate-6 group-hover:scale-110">
                   <div className="font-display font-bold text-xl leading-none">147+</div>
                   <div className="text-xs font-bold uppercase mt-1">объектов</div>
                 </div>
              </div>
              {/* Decorative */}
-             <div className="absolute top-4 -right-4 w-full h-full bg-[#D5FF00] brutal-border -z-0"></div>
+             <div className="absolute top-4 -right-4 w-full h-full bg-[#D5FF00] brutal-border transition-transform duration-500 group-hover:translate-x-1 group-hover:translate-y-1 -z-0"></div>
           </div>
         </div>
       </div>
