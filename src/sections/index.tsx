@@ -140,35 +140,27 @@ export const ProcessSection = () => {
           Как проходит <span className="bg-[#D5FF00] px-2 inline-block">ремонт</span>
         </h2>
         
-        <div className="relative">
-           {/* Desktop Horizontal Line */}
-           <div className="absolute top-[20px] left-[32px] right-[32px] h-6 bg-white border-4 border-black hidden md:block overflow-hidden shadow-[4px_4px_0_0_#000] z-0">
-             <motion.div 
-               className="h-full bg-[#D5FF00] origin-left"
-               style={{ scaleX: prefersReducedMotion ? 1 : scaleX }}
-             />
-           </div>
-           
-           {/* Mobile Vertical Line */}
-           <div className="absolute top-[32px] bottom-[32px] left-[20px] w-6 bg-white border-4 border-black md:hidden overflow-hidden shadow-[4px_4px_0_0_#000] z-0">
+        <div className="relative max-w-3xl mx-auto">
+           {/* Vertical Line */}
+           <div className="absolute top-[32px] bottom-[32px] left-[20px] md:left-[24px] w-6 bg-white border-4 border-black overflow-hidden shadow-[4px_4px_0_0_#000] z-0">
              <motion.div 
                className="w-full h-full bg-[#D5FF00] origin-top"
                style={{ scaleY: prefersReducedMotion ? 1 : scaleY }}
              />
            </div>
            
-           <div className="grid grid-cols-1 md:grid-cols-6 gap-8 md:gap-3 relative z-10 w-full">
+           <div className="flex flex-col gap-8 relative z-10 w-full pl-0">
              {processSteps.map((step, i) => (
-                <div key={i} className="flex flex-row md:flex-col items-center md:items-start text-left mt-4 md:mt-0 relative group">
-                  <div className="w-16 h-16 bg-white shrink-0 border-4 border-black brutal-shadow flex items-center justify-center font-display font-bold text-2xl mb-0 md:mb-6 z-10 mr-6 md:mr-0 group-hover:bg-[#D5FF00] transition-colors relative">
+                <div key={i} className="flex flex-row items-stretch text-left mt-4 relative group">
+                  <div className="w-16 h-16 md:w-20 md:h-20 bg-white shrink-0 border-4 border-black brutal-shadow flex items-center justify-center font-display font-bold text-2xl md:text-3xl mb-0 z-10 mr-6 md:mr-8 group-hover:bg-[#D5FF00] transition-colors relative">
                     {step.num}
                   </div>
                   
-                  <div className="flex-1 w-full bg-white p-3 md:p-4 border-2 md:border-4 border-black brutal-shadow flex flex-col h-full rounded-none group-hover:-translate-y-1 group-hover:-translate-x-1 group-hover:shadow-[6px_6px_0_0_#000] lg:group-hover:shadow-[8px_8px_0_0_#000] transition-all">
-                    <h3 className="font-display font-bold text-xl md:text-sm lg:text-lg mb-2 uppercase">{step.title}</h3>
-                    <p className="text-sm lg:text-sm font-medium mb-4 flex-1 text-gray-600">{step.description}</p>
+                  <div className="flex-1 w-full bg-white p-5 md:p-6 border-4 border-black brutal-shadow flex flex-col h-full rounded-none group-hover:-translate-y-1 group-hover:-translate-x-1 group-hover:shadow-[6px_6px_0_0_#000] lg:group-hover:shadow-[8px_8px_0_0_#000] transition-all self-center">
+                    <h3 className="font-display font-bold text-xl md:text-2xl mb-2 uppercase">{step.title}</h3>
+                    <p className="text-sm md:text-base font-medium mb-4 flex-1 text-gray-600">{step.description}</p>
                     <div className="block mt-auto">
-                      <div className="text-[12px] xl:text-xs font-bold uppercase text-black bg-[#D5FF00] inline-block px-2 py-1.5 border-2 border-black shadow-[2px_2px_0_0_rgba(0,0,0,1)] text-center leading-tight">
+                      <div className="text-[12px] md:text-sm font-bold uppercase text-black bg-[#D5FF00] inline-block px-3 py-2 border-2 border-black shadow-[2px_2px_0_0_rgba(0,0,0,1)] text-center leading-tight">
                         {step.result}
                       </div>
                     </div>
