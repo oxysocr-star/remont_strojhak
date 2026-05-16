@@ -6,6 +6,7 @@ export interface Tariff {
   title: string;
   subtitle: string;
   description: string;
+  price: string;
   features: {
     rough: boolean;
     fine: boolean;

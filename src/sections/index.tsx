@@ -118,18 +118,18 @@ export const ProcessSection = () => {
   
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ["start center", "end center"]
+    offset: ["start 80%", "end 60%"]
   });
 
   const scaleX = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
+    stiffness: 80,
+    damping: 20,
     restDelta: 0.001
   });
 
   const scaleY = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
+    stiffness: 80,
+    damping: 20,
     restDelta: 0.001
   });
   
@@ -142,30 +142,36 @@ export const ProcessSection = () => {
         
         <div className="relative">
            {/* Desktop Horizontal Line */}
-           <div className="absolute top-8 left-0 w-full h-1 bg-gray-200 hidden md:block" />
-           <motion.div 
-             className="absolute top-8 left-0 h-1 bg-[#D5FF00] hidden md:block origin-left"
-             style={{ scaleX: prefersReducedMotion ? 1 : scaleX }}
-           />
+           <div className="absolute top-[20px] left-[32px] right-[32px] h-6 bg-white border-4 border-black hidden md:block overflow-hidden shadow-[4px_4px_0_0_#000] z-0">
+             <motion.div 
+               className="h-full bg-[#D5FF00] origin-left"
+               style={{ scaleX: prefersReducedMotion ? 1 : scaleX }}
+             />
+           </div>
            
            {/* Mobile Vertical Line */}
-           <div className="absolute top-0 left-8 w-1 h-full bg-gray-200 md:hidden" />
-           <motion.div 
-             className="absolute top-0 left-8 w-1 bg-[#D5FF00] md:hidden origin-top"
-             style={{ scaleY: prefersReducedMotion ? 1 : scaleY }}
-           />
+           <div className="absolute top-[32px] bottom-[32px] left-[20px] w-6 bg-white border-4 border-black md:hidden overflow-hidden shadow-[4px_4px_0_0_#000] z-0">
+             <motion.div 
+               className="w-full h-full bg-[#D5FF00] origin-top"
+               style={{ scaleY: prefersReducedMotion ? 1 : scaleY }}
+             />
+           </div>
            
-           <div className="grid grid-cols-1 md:grid-cols-6 gap-8 md:gap-4 relative z-10 w-full">
+           <div className="grid grid-cols-1 md:grid-cols-6 gap-8 md:gap-3 relative z-10 w-full">
              {processSteps.map((step, i) => (
                 <div key={i} className="flex flex-row md:flex-col items-center md:items-start text-left mt-4 md:mt-0 relative group">
-                  <div className="w-16 h-16 bg-white shrink-0 brutal-border flex items-center justify-center font-display font-bold text-xl mb-0 md:mb-6 z-10 mr-4 md:mr-0 group-hover:bg-[#D5FF00] transition-colors relative">
+                  <div className="w-16 h-16 bg-white shrink-0 border-4 border-black brutal-shadow flex items-center justify-center font-display font-bold text-2xl mb-0 md:mb-6 z-10 mr-6 md:mr-0 group-hover:bg-[#D5FF00] transition-colors relative">
                     {step.num}
                   </div>
                   
-                  <div className="flex-1 bg-white p-4 md:p-0 md:bg-transparent brutal-border md:border-none brutal-shadow md:shadow-none min-h-[140px] md:min-h-0">
-                    <h3 className="font-display font-bold uppercase mb-2">{step.title}</h3>
-                    <p className="text-sm font-medium mb-4 h-auto md:h-10 text-gray-600">{step.description}</p>
-                    <div className="text-xs font-bold uppercase text-black bg-[#D5FF00] inline-block px-2 py-1 brutal-border shadow-[2px_2px_0px_rgba(0,0,0,1)]">{step.result}</div>
+                  <div className="flex-1 w-full bg-white p-3 md:p-4 border-2 md:border-4 border-black brutal-shadow flex flex-col h-full rounded-none group-hover:-translate-y-1 group-hover:-translate-x-1 group-hover:shadow-[6px_6px_0_0_#000] lg:group-hover:shadow-[8px_8px_0_0_#000] transition-all">
+                    <h3 className="font-display font-bold text-xl md:text-sm lg:text-lg mb-2 uppercase">{step.title}</h3>
+                    <p className="text-sm lg:text-sm font-medium mb-4 flex-1 text-gray-600">{step.description}</p>
+                    <div className="block mt-auto">
+                      <div className="text-[12px] xl:text-xs font-bold uppercase text-black bg-[#D5FF00] inline-block px-2 py-1.5 border-2 border-black shadow-[2px_2px_0_0_rgba(0,0,0,1)] text-center leading-tight">
+                        {step.result}
+                      </div>
+                    </div>
                   </div>
                 </div>
              ))}
@@ -222,9 +228,10 @@ export const TariffsSection = () => {
             >
               <div className="mb-6">
                 <h3 className="font-display font-bold text-3xl mb-1">{t.title}</h3>
-                <p className="text-[#D5FF00] font-bold uppercase text-xs tracking-widest">{t.subtitle}</p>
+                <p className="text-[#D5FF00] font-bold uppercase text-xs tracking-widest mb-4">{t.subtitle}</p>
+                <div className="text-xl font-bold bg-white text-black inline-block px-3 py-1 brutal-border shadow-[2px_2px_0px_#D5FF00]">{t.price}</div>
               </div>
-              <p className="text-gray-300 font-medium mb-8 flex-none min-h-[80px]">{t.description}</p>
+              <p className="text-gray-300 font-medium mb-8 flex-none min-h-[60px]">{t.description}</p>
               
               <div className="space-y-4 flex-1 mb-8">
                 <div className="flex justify-between border-b border-gray-800 pb-2">
@@ -257,7 +264,7 @@ export const TariffsSection = () => {
                 </div>
               </div>
               
-              <Button variant={isSelected ? "primary" : "outline"} className={!isSelected ? "text-white border-white hover:bg-white hover:text-black" : "w-full mt-auto"} onClick={() => handleSelect(t.id)}>
+              <Button variant={isSelected ? "primary" : "outline"} className={`w-full mt-auto ${!isSelected ? '!bg-transparent border-2 border-white !text-white hover:!bg-white hover:!text-black' : ''}`} onClick={() => handleSelect(t.id)}>
                 {isSelected ? "Выбран" : "Выбрать тариф"}
               </Button>
             </motion.div>

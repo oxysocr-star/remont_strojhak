@@ -6,6 +6,7 @@ export const tariffs: Tariff[] = [
     title: 'Базовый',
     subtitle: 'для аренды',
     description: 'Для быстрой сдачи в аренду, продажи или недорогого ремонта без лишних решений.',
+    price: 'от 12 000 ₽ / м²',
     features: {
       rough: true,
       fine: true,
@@ -21,6 +22,7 @@ export const tariffs: Tariff[] = [
     title: 'Комфорт',
     subtitle: 'для жизни',
     description: 'Для ремонта квартиры под себя: с понятной сметой, подбором материалов и отчетами.',
+    price: 'от 17 000 ₽ / м²',
     features: {
       rough: true,
       fine: true,
@@ -36,6 +38,7 @@ export const tariffs: Tariff[] = [
     title: 'Премиум',
     subtitle: 'для сложных объектов',
     description: 'Для сложных проектов, инженерных решений и ремонта по дизайн-проекту.',
+    price: 'от 25 000 ₽ / м²',
     features: {
       rough: true,
       fine: true,
