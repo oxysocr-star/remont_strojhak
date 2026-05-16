@@ -33,12 +33,10 @@ async function startServer() {
   // AI Chat endpoint
   app.post("/api/ai/chat", async (req, res) => {
     try {
-      const apiKey = process.env.GEMINI_API_KEY;
+      const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
       if (!apiKey) {
-        throw new Error("GEMINI_API_KEY is not configured.");
+        throw new Error("API_KEY is not configured.");
       }
-      console.log('Using API key starting with:', apiKey.substring(0, 5), 'length:', apiKey.length);
-
 
       const { sessionId, message, pageContext, leadData, history = [] } = req.body;
       const ai = new GoogleGenAI({ apiKey });
@@ -79,48 +77,21 @@ ${siteKnowledge}
         required: ["answer", "suggestedActions"]
       };
 
-      let aiResponse;
-      let retries = 3;
-      while(retries > 0) {
-        try {
-          aiResponse = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
-            contents: [
-              ...history.map((msg: any) => ({
-                role: msg.role === 'ai' ? 'model' : 'user',
-                parts: [{ text: msg.text }]
-              })),
-              { role: 'user', parts: [{ text: message }] }
-            ],
-            config: {
-              systemInstruction,
-              responseMimeType: "application/json",
-              responseSchema,
-            }
-          });
-          break; // successfully got response
-        } catch (err: any) {
-          const isRateLimit = err.status === 429 || err.message?.includes("429") || err.message?.includes("RESOURCE_EXHAUSTED") || err.message?.includes("Quota exceeded");
-          if (isRateLimit) {
-            console.log(`AI API Quota exceeded. Returning fallback message.`);
-            return res.json({
-               answer: "Извините, мы превысили лимит обращений к AI. Пожалуйста, подождите минутку и попробуйте снова, или обратитесь напрямую к нашему менеджеру.",
-               suggestedActions: ["Перезвоните мне"]
-            });
-          }
-          if (err.status === 503 && retries > 1) {
-            console.log(`AI API busy (status ${err.status}), retrying... (${retries-1} retries left)`);
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            retries--;
-          } else {
-            throw err;
-          }
+      const aiResponse = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: [
+          ...history.map((msg: any) => ({
+            role: msg.role === 'ai' ? 'model' : 'user',
+            parts: [{ text: msg.text }]
+          })),
+          { role: 'user', parts: [{ text: message }] }
+        ],
+        config: {
+          systemInstruction,
+          responseMimeType: "application/json",
+          responseSchema,
         }
-      }
-
-      if (!aiResponse) {
-        throw new Error("Failed to generate response after retries");
-      }
+      });
 
       const resultText = aiResponse.text.trim();
       let parsed = { answer: "Извините, произошла ошибка.", suggestedActions: [] };
@@ -133,9 +104,7 @@ ${siteKnowledge}
       res.json(parsed);
     } catch (error: any) {
       console.error('AI Error:', error);
-      res.status(500).json({ 
-        error: error.message || 'Error generating AI response'
-      });
+      res.status(500).json({ error: error.message || 'Error generating AI response' });
     }
   });
 
@@ -185,7 +154,7 @@ ${siteKnowledge}
   } else {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
-    app.get('*', (req, res) => {
+    app.get('*all', (req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }

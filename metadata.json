@@ -2,7 +2,5 @@
   "name": "СтройХак — Ремонт Квартир",
   "description": "Профессиональный ремонт квартир с фиксированной сметой и гарантией 3 года.",
   "requestFramePermissions": [],
-  "majorCapabilities": [
-    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
-  ]
+  "majorCapabilities": []
 }

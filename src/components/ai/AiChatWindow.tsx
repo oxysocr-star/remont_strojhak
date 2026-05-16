@@ -38,7 +38,6 @@ export const AiChatWindow: React.FC = () => {
     setInput('');
     setQuickReplies([]);
     setIsLoading(true);
-    setShowLeadForm(false);
     
     // Check if user is asking to send to manager / leave request
     if (text.toLowerCase().includes('менеджер') || text.toLowerCase().includes('заявк') || text.toLowerCase().includes('расчет')) {
@@ -54,14 +53,11 @@ export const AiChatWindow: React.FC = () => {
           message: text,
           pageContext: activeSection,
           history: messages,
-          leadData: { area, repairType: tariff, objectType }
+          leadData: { area, repairType: tariff?.id, objectType }
         })
       });
       
-      if (!response.ok) {
-        const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.error || `HTTP ${response.status}`);
-      }
+      if (!response.ok) throw new Error('API Error');
       
       const data = await response.json();
       setMessages(prev => [...prev, { role: 'ai', text: data.answer || 'Произошла ошибка связи с ИИ.' }]);
@@ -73,8 +69,8 @@ export const AiChatWindow: React.FC = () => {
       if (data.answer && (data.answer.toLowerCase().includes('вас зовут') || data.answer.toLowerCase().includes('номер') || data.answer.toLowerCase().includes('менеджер'))) {
         setShowLeadForm(true);
       }
-    } catch (e: any) {
-      setMessages(prev => [...prev, { role: 'ai', text: `К сожалению, сервис временно недоступен. Ошибка: ${e.message}` }]);
+    } catch (e) {
+      setMessages(prev => [...prev, { role: 'ai', text: 'К сожалению, сервис временно недоступен.' }]);
     } finally {
       setIsLoading(false);
     }
@@ -94,7 +90,7 @@ export const AiChatWindow: React.FC = () => {
           phone: data.phone,
           area,
           objectType,
-          repairType: tariff
+          repairType: tariff?.id
         })
       });
       setMessages(prev => [...prev, { role: 'ai', text: 'Спасибо. Передал данные менеджеру. Он свяжется с вами для точной сметы.' }]);
@@ -159,12 +155,12 @@ export const AiChatWindow: React.FC = () => {
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleSend(input)}
               placeholder="Ваш вопрос..."
-              disabled={isLoading}
+              disabled={isLoading || showLeadForm}
               className="flex-1 p-3 border-4 border-white bg-black text-white font-bold outline-none focus:bg-[#D5FF00] focus:text-black focus:border-[#D5FF00] disabled:opacity-50"
             />
             <button 
               onClick={() => handleSend(input)}
-              disabled={isLoading || !input.trim()}
+              disabled={isLoading || showLeadForm || !input.trim()}
               className="px-4 py-3 bg-[#D5FF00] border-4 border-[#D5FF00] font-bold text-black uppercase transition-transform active:translate-y-1 active:translate-x-1 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[4px_4px_0_0_#fff] disabled:opacity-50 disabled:transform-none disabled:shadow-none"
             >
               &gt;
