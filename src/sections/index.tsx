@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion, useReducedMotion, useScroll, useSpring } from 'motion/react';
+import React, { useState } from 'react';
+import { motion, useReducedMotion, useScroll, useSpring, AnimatePresence } from 'motion/react';
 import { processSteps, tariffs } from '../data';
 import { useCalculatorStore } from '../store';
 import { Button } from '../components/ui/Button';
@@ -174,6 +174,46 @@ export const ProcessSection = () => {
   );
 };
 
+const featureDescriptions: Record<string, string> = {
+  'Черновые работы': 'Штукатурка стен, разводка электрики и сантехники, стяжка пола и подготовка всех поверхностей.',
+  'Чистовая отделка': 'Укладка плитки, ламината, поклейка обоев, покраска стен, установка межкомнатных дверей.',
+  'Видеоотчеты': 'Еженедельные видеообзоры хода работ на объекте в закрытом мессенджере.',
+  'Подбор материалов': 'Помощь в выборе и закупке чистовых материалов и сантехники с нашими скидками.',
+  'Дизайн-сопровождение': 'Консультации дизайнера по ходу реализации проекта, помощь в выборе текстур.',
+  'Авторский надзор': 'Контроль соответствия выполняемых работ дизайн-проекту автором проекта.',
+  'Сложная инженерия': 'Проектирование и монтаж систем умного дома и приточно-вытяжной вентиляции.',
+};
+
+const FeatureItem = ({ label, value }: { label: string, value: React.ReactNode }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const description = featureDescriptions[label];
+
+  return (
+    <div 
+      className="relative flex justify-between border-b border-gray-800 pb-2 cursor-help group/feat"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <span className="text-sm underline decoration-gray-700 decoration-dotted underline-offset-4 group-hover/feat:decoration-[#D5FF00] transition-colors">{label}</span>
+      <span className="text-sm font-bold">{value}</span>
+      
+      <AnimatePresence>
+        {isHovered && description && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 5, scale: 0.95 }}
+            className="absolute bottom-full left-0 mb-3 w-64 p-3 bg-white text-black text-xs font-bold z-[60] border-2 border-black shadow-[4px_4px_0_0_#D5FF00]"
+          >
+            {description}
+            <div className="absolute -bottom-2 left-4 w-3 h-3 bg-white border-b-2 border-r-2 border-black rotate-45" />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
 export const TariffsSection = () => {
   const currentTariff = useCalculatorStore(s => s.tariff);
   const setTariff = useCalculatorStore(s => s.setTariff);
@@ -226,34 +266,45 @@ export const TariffsSection = () => {
               <p className="text-gray-300 font-medium mb-8 flex-none min-h-[60px]">{t.description}</p>
               
               <div className="space-y-4 flex-1 mb-8">
-                <div className="flex justify-between border-b border-gray-800 pb-2">
-                  <span className="text-sm">Черновые работы</span>
-                  <span className="text-[#D5FF00]" aria-hidden="true">✓</span>
-                </div>
-                <div className="flex justify-between border-b border-gray-800 pb-2">
-                  <span className="text-sm">Чистовая отделка</span>
-                  <span className="text-[#D5FF00]" aria-hidden="true">✓</span>
-                </div>
-                <div className="flex justify-between border-b border-gray-800 pb-2">
-                  <span className="text-sm">Видеоотчеты</span>
-                  <span className="text-[#D5FF00]" aria-hidden="true">✓</span>
-                </div>
-                <div className="flex justify-between border-b border-gray-800 pb-2">
-                  <span className="text-sm">Подбор материалов</span>
-                  <span className={t.features.materials ? "text-[#D5FF00]" : "text-gray-500"} aria-hidden={t.features.materials === true || !t.features.materials ? 'true' : 'false'}>{t.features.materials === true ? '✓' : (t.features.materials === 'partial' ? 'Частично' : '—')}</span>
-                </div>
-                <div className="flex justify-between border-b border-gray-800 pb-2">
-                  <span className="text-sm">Дизайн-сопровождение</span>
-                  <span className={t.features.design ? "text-[#D5FF00]" : "text-gray-500"} aria-hidden={t.features.design === true || !t.features.design ? 'true' : 'false'}>{t.features.design === true ? '✓' : (t.features.design === 'partial' ? 'Частично' : '—')}</span>
-                </div>
-                <div className="flex justify-between border-b border-gray-800 pb-2">
-                  <span className="text-sm">Авторский надзор</span>
-                  <span className={t.features.supervision ? "text-[#D5FF00]" : "text-gray-500"} aria-hidden="true">{t.features.supervision ? '✓' : '—'}</span>
-                </div>
-                <div className="flex justify-between border-b border-gray-800 pb-2">
-                  <span className="text-sm">Сложная инженерия</span>
-                  <span className={t.features.engineering ? "text-[#D5FF00]" : "text-gray-500"} aria-hidden="true">{t.features.engineering ? '✓' : '—'}</span>
-                </div>
+                <FeatureItem label="Черновые работы" value={<span className="text-[#D5FF00]">✓</span>} />
+                <FeatureItem label="Чистовая отделка" value={<span className="text-[#D5FF00]">✓</span>} />
+                <FeatureItem label="Видеоотчеты" value={<span className="text-[#D5FF00]">✓</span>} />
+                
+                <FeatureItem 
+                  label="Подбор материалов" 
+                  value={
+                    <span className={t.features.materials ? "text-[#D5FF00]" : "text-gray-500"}>
+                      {t.features.materials === true ? '✓' : (t.features.materials === 'partial' ? 'Частично' : '—')}
+                    </span>
+                  } 
+                />
+                
+                <FeatureItem 
+                  label="Дизайн-сопровождение" 
+                  value={
+                    <span className={t.features.design ? "text-[#D5FF00]" : "text-gray-500"}>
+                      {t.features.design === true ? '✓' : (t.features.design === 'partial' ? 'Частично' : '—')}
+                    </span>
+                  } 
+                />
+
+                <FeatureItem 
+                  label="Авторский надзор" 
+                  value={
+                    <span className={t.features.supervision ? "text-[#D5FF00]" : "text-gray-500"}>
+                      {t.features.supervision ? '✓' : '—'}
+                    </span>
+                  } 
+                />
+
+                <FeatureItem 
+                  label="Сложная инженерия" 
+                  value={
+                    <span className={t.features.engineering ? "text-[#D5FF00]" : "text-gray-500"}>
+                      {t.features.engineering ? '✓' : '—'}
+                    </span>
+                  } 
+                />
               </div>
               
               <Button variant={isSelected ? "primary" : "outline"} className={`w-full mt-auto ${!isSelected ? '!bg-transparent border-2 border-white !text-white hover:!bg-white hover:!text-black' : ''}`} onClick={() => handleSelect(t.id)}>

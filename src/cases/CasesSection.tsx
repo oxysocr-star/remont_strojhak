@@ -88,9 +88,18 @@ export const CasesSection = () => {
                   
                   {c.review && (
                     <div className="bg-gray-50 p-4 border border-black mb-6">
-                      <div className="font-bold text-sm mb-1 uppercase">Отзыв клиента:</div>
-                      <p className="text-sm italic font-medium">«{c.review.likedAfter}»</p>
-                      <div className="text-xs font-bold mt-2 text-gray-500">— {c.review.name}</div>
+                      <div className="flex items-center gap-1 text-[#D5FF00] drop-shadow-[1px_1px_0px_rgba(0,0,0,1)] text-lg mb-2">
+                        {Array(c.review.rating).fill('★').join('')}
+                      </div>
+                      {c.review.fearBefore && (
+                        <p className="text-sm italic font-medium mb-2">
+                          <strong className="not-italic">Сомнения до:</strong> {c.review.fearBefore}
+                        </p>
+                      )}
+                      <p className="text-sm italic font-medium">
+                        <strong className="not-italic">В итоге:</strong> «{c.review.likedAfter}»
+                      </p>
+                      <div className="text-xs font-bold mt-3 text-gray-500 uppercase">— {c.review.name}</div>
                     </div>
                   )}
                   

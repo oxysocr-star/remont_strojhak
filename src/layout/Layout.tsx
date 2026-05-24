@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Button } from '../components/ui/Button';
 import { trackEvent } from '../lib/analytics';
+import { Copy, Check } from 'lucide-react';
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -100,6 +101,14 @@ export const MobileBottomNav = () => {
 
 export const ContactsSection = () => {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText('+7 (999) 000-00-00').then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
 
   return (
     <section className="py-24 bg-white" id="contacts">
@@ -108,6 +117,23 @@ export const ContactsSection = () => {
             <h2 className="text-3xl md:text-4xl font-display font-bold uppercase mb-6">
               Готовы начать? <br/> Оставьте заявку
             </h2>
+            
+            <div className="mb-6">
+              <p className="text-sm font-bold uppercase mb-2">Или позвоните нам</p>
+              <div 
+                className="inline-flex items-center gap-3 bg-white brutal-border p-3 cursor-pointer hover:bg-[#D5FF00]/10 transition-colors group relative"
+                onClick={handleCopy}
+              >
+                <span className="font-display font-bold text-xl md:text-2xl">+7 (999) 000-00-00</span>
+                {copied ? <Check className="w-5 h-5 text-green-600" /> : <Copy className="w-5 h-5 opacity-50 group-hover:opacity-100 transition-opacity" />}
+                {copied && (
+                  <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-black text-white text-xs font-bold px-3 py-1 brutal-border shadow-sm whitespace-nowrap z-10 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2">
+                    Скопировано!
+                  </div>
+                )}
+              </div>
+            </div>
+
             <p className="font-medium mb-8">Наш менеджер свяжется с вами, чтобы обсудить ваш объект и ответить на вопросы.</p>
             <form className="flex flex-col gap-4" onSubmit={async (e) => { 
               e.preventDefault(); 

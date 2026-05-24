@@ -3,9 +3,9 @@ import { HeroSection } from './sections/HeroSection';
 import { TrustSection, ProblemsSection, ProcessSection, TariffsSection } from './sections/index';
 import { Calculator } from './calculator/Calculator';
 import { CasesSection } from './cases/CasesSection';
-import { ReviewsSection, FaqSection, GuaranteesSection } from './sections/RestSections';
+import { FaqSection, GuaranteesSection } from './sections/RestSections';
 import { Header, Footer, ContactsSection, MobileBottomNav } from './layout/Layout';
-import { AiWidget } from './components/ai/AiWidget';
+import { ScrollToTop } from './components/ui/ScrollToTop';
 
 export default function App() {
   useEffect(() => {
@@ -34,14 +34,13 @@ export default function App() {
         <TariffsSection />
         <Calculator />
         <CasesSection />
-        <ReviewsSection />
         <GuaranteesSection />
         <FaqSection />
         <ContactsSection />
       </main>
       <Footer />
       <MobileBottomNav />
-      <AiWidget />
+      <ScrollToTop />
     </div>
   );
 }
