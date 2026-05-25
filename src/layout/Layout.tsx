@@ -6,6 +6,22 @@ import { Copy, Check } from 'lucide-react';
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollHeight > 0) {
+        setScrollProgress((window.scrollY / scrollHeight) * 100);
+      } else {
+        setScrollProgress(0);
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <>
@@ -31,6 +47,14 @@ export const Header = () => {
           <button className="lg:hidden p-2 bg-black text-white" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             {isMenuOpen ? 'X' : '☰'}
           </button>
+        </div>
+        
+        {/* Progress Bar */}
+        <div className="absolute left-0 bottom-[-4px] translate-y-full w-full h-2 md:h-3 bg-gray-100 border-b-2 border-black overflow-hidden z-40">
+          <div 
+            className="h-full bg-[#D5FF00] border-r-2 border-black" 
+            style={{ width: `${scrollProgress}%` }}
+          />
         </div>
       </header>
       
