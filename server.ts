@@ -17,19 +17,19 @@ async function startServer() {
   });
 
   app.post("/api/ai/chat", async (req, res) => {
+    console.log("Incoming AI Chat request...");
     try {
       const { message, sessionId, pageContext, leadData } = req.body;
       const { GoogleGenAI } = await import("@google/genai");
       
       const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
       if (!apiKey) {
+        console.error("AI CHAT ERROR: Missing API Key");
         return res.status(500).json({ error: "Missing Gemini API Key. Please add API_KEY to secrets." });
       }
 
-      const ai = new GoogleGenAI({ 
-        apiKey,
-        httpOptions: { headers: { 'User-Agent': 'aistudio-build' } }
-      });
+      const ai = new GoogleGenAI({ apiKey });
+      console.log("Generating content for model gemini-2.5-flash...");
 
       // Read knowledge base from site-content directory
       const contentDir = path.join(process.cwd(), 'site-content');
@@ -86,7 +86,6 @@ ${knowledgeBase}
         config: {
           systemInstruction,
           responseMimeType: "application/json",
-          thinkingConfig: { thinkingBudget: 2000 }
         },
       });
 

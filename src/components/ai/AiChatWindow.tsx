@@ -89,12 +89,16 @@ export const AiChatWindow = () => {
         setSuggestedActions(data.suggestedActions);
       }
       
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      console.error("AI_FETCH_ERROR", error);
+      let errorMsg = "Извините, произошла ошибка подключения. Попробуйте еще раз.";
+      if (error.message?.includes('Failed to fetch')) {
+        errorMsg = "Ошибка подключения к серверу. Возможно, сервер еще не запущен или путь API неверный.";
+      }
       setMessages(prev => [...prev, {
         id: Date.now().toString(),
         role: 'assistant',
-        content: "Извините, произошла ошибка подключения. Попробуйте еще раз."
+        content: errorMsg
       }]);
     } finally {
       setIsTyping(false);
