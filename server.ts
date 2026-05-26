@@ -80,14 +80,37 @@ ${knowledgeBase}
 Если пользователь оставил свой номер телефона — установи isLeadCaptured: true, помести номер в leadPhone, а в answer поблагодари и скажи, что инженер скоро свяжется.
 `;
 
-      const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: message,
-        config: {
-          systemInstruction,
-          responseMimeType: "application/json",
-        },
-      });
+      const generateAIResponse = async (modelName: string, retryCount = 2, delay = 1000): Promise<any> => {
+        try {
+          console.log(`Attempting generation with ${modelName}... (rem: ${retryCount})`);
+          return await ai.models.generateContent({
+            model: modelName,
+            contents: message,
+            config: {
+              systemInstruction,
+              responseMimeType: "application/json",
+            },
+          });
+        } catch (error: any) {
+          const isOverloaded = error.message?.includes("503") || error.status === 503 || error.message?.includes("high demand") || error.status === 429;
+          
+          if (isOverloaded && retryCount > 0) {
+            console.warn(`Model ${modelName} overloaded, retrying in ${delay}ms...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+            return generateAIResponse(modelName, retryCount - 1, delay * 2);
+          }
+          
+          // Fallback to flash-lite if flash is still failing after retries
+          if (isOverloaded && modelName === "gemini-2.5-flash") {
+            console.warn("Switching to gemini-flash-lite-latest as fallback...");
+            return generateAIResponse("gemini-flash-lite-latest", 1, 1000);
+          }
+          
+          throw error;
+        }
+      };
+
+      const response = await generateAIResponse("gemini-2.5-flash");
 
       const text = response.text || "{}";
       const jsonResponse = JSON.parse(text);
@@ -112,7 +135,8 @@ ${knowledgeBase}
       res.json(jsonResponse);
     } catch (error: any) {
       console.error("AI Chat Error:", error);
-      res.status(500).json({ error: "Failed to generate AI response" });
+      const errorMessage = error.message || "Failed to generate AI response";
+      res.status(500).json({ error: errorMessage });
     }
   });
   app.post("/api/leads", async (req, res) => {

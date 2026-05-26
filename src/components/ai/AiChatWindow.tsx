@@ -72,6 +72,11 @@ export const AiChatWindow = () => {
         })
       });
 
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Server Error ${response.status}`);
+      }
+
       const data = await response.json();
       
       if (data.isLeadCaptured) {
@@ -92,9 +97,14 @@ export const AiChatWindow = () => {
     } catch (error: any) {
       console.error("AI_FETCH_ERROR", error);
       let errorMsg = "Извините, произошла ошибка подключения. Попробуйте еще раз.";
-      if (error.message?.includes('Failed to fetch')) {
+      
+      const errorMessage = error.message?.toLowerCase() || '';
+      if (errorMessage.includes('failed to fetch')) {
         errorMsg = "Ошибка подключения к серверу. Возможно, сервер еще не запущен или путь API неверный.";
+      } else if (errorMessage.includes('demand') || errorMessage.includes('overloaded') || errorMessage.includes('503') || errorMessage.includes('429')) {
+        errorMsg = "ИИ сейчас перегружен из-за большого количества запросов. Пожалуйста, подождите минуту или оставьте свой номер, и наш менеджер проконсультирует вас!";
       }
+
       setMessages(prev => [...prev, {
         id: Date.now().toString(),
         role: 'assistant',
