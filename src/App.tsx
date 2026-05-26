@@ -7,6 +7,7 @@ import { CasesSection } from './cases/CasesSection';
 import { FaqSection, GuaranteesSection } from './sections/RestSections';
 import { Header, Footer, ContactsSection, MobileBottomNav } from './layout/Layout';
 import { ScrollToTop } from './components/ui/ScrollToTop';
+import { AiWidget } from './components/ai/AiWidget';
 
 export default function App() {
   useEffect(() => {
@@ -42,6 +43,7 @@ export default function App() {
       <Footer />
       <MobileBottomNav />
       <ScrollToTop />
+      <AiWidget />
       <Toaster 
         position="bottom-right" 
         toastOptions={{ 

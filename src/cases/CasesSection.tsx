@@ -4,9 +4,23 @@ import { casesData } from '../data';
 import { Button } from '../components/ui/Button';
 import { BeforeAfterSlider } from '../components/ui/BeforeAfterSlider';
 import { trackEvent } from '../lib/analytics';
+import { useAiStore } from '../store';
 
 export const CasesSection = () => {
   const [filter, setFilter] = useState('Все');
+  const [seenCases, setSeenCases] = useState<Set<string>>(new Set());
+  const aiStore = useAiStore();
+  
+  const handleCaseMouseEnter = (id: string) => {
+    if (!seenCases.has(id)) {
+      setSeenCases(prev => {
+        const newSet = new Set(prev);
+        newSet.add(id);
+        return newSet;
+      });
+      aiStore.incrementViewedCases();
+    }
+  };
   
   const filters = ['Все', 'До 50 м²', '50–90 м²', 'Премиум', 'Под аренду', 'Для жизни'];
   
@@ -61,6 +75,7 @@ export const CasesSection = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.3 }}
+                onMouseEnter={() => handleCaseMouseEnter(c.id)}
                 className="bg-white brutal-border overflow-hidden flex flex-col transition-all duration-300 shadow-[3px_3px_0_0_#000] md:shadow-[6px_6px_0_0_#000] hover:-translate-y-1 hover:scale-[1.02] hover:shadow-[8px_8px_0_0_#000,0_10px_20px_rgba(0,0,0,0.1)] md:hover:shadow-[12px_12px_0_0_#000,0_15px_30px_rgba(0,0,0,0.15)]"
               >
                 <BeforeAfterSlider beforeImage={c.imageBefore} afterImage={c.imageAfter} />
