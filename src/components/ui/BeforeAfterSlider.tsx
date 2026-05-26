@@ -35,7 +35,14 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({ beforeImag
         className="absolute inset-0 h-full overflow-hidden border-r-4 border-black z-10"
         style={{ width: `${position}%` }}
       >
-        <img src={beforeImage} alt="До" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover max-w-none grayscale" style={{ width: containerRef.current?.offsetWidth || '100vw' }} />
+        <img 
+          src={beforeImage} 
+          alt="До" 
+          loading="lazy" 
+          decoding="async" 
+          className="absolute inset-0 w-full h-full object-cover max-w-none grayscale" 
+          style={{ width: containerRef.current ? `${containerRef.current.offsetWidth}px` : '100%' }} 
+        />
         <div className="absolute top-4 left-4 bg-white text-black px-2 py-1 font-bold uppercase text-xs brutal-border pointer-events-none">До</div>
       </div>
 

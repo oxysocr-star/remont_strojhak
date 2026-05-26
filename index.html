@@ -114,8 +114,13 @@
     </script>
   </head>
   <body>
+    <script>console.log('HTML loaded');</script>
+    <!-- SERVER TEST: IF YOU SEE THIS, STATIC HTML IS WORKING -->
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script type="module">
+      console.log('Checking main.tsx...');
+    </script>
   </body>
 </html>
 
