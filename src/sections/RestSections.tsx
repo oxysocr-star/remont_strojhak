@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
+import { Search } from 'lucide-react';
 import { faqData } from '../data';
 import { Button } from '../components/ui/Button';
 import { trackEvent } from '../lib/analytics';
 
 export const FaqSection = () => {
   const [openId, setOpenId] = useState<string>('1');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredFaq = faqData.filter(faq => 
+    faq.question.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    faq.answer.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <section className="py-24 bg-white" id="faq">
@@ -20,8 +27,22 @@ export const FaqSection = () => {
           Частые <span className="bg-[#D5FF00] px-2 inline-block">вопросы</span>
         </motion.h2>
         
+        <div className="mb-8 relative max-w-2xl mx-auto">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <Search className="h-5 w-5 text-gray-500" />
+          </div>
+          <input
+            type="text"
+            className="w-full pl-11 pr-4 py-3 border-2 border-black font-bold focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-black bg-white focus:bg-[#D5FF00]/10 transition-colors"
+            placeholder="Поиск по вопросам и ответам..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+
         <div className="space-y-4">
-          {faqData.map((faq, i) => (
+          {filteredFaq.length > 0 ? (
+            filteredFaq.map((faq, i) => (
             <React.Fragment key={faq.id}>
               <motion.div 
                 initial={{ opacity: 0, y: 10 }}
@@ -58,7 +79,19 @@ export const FaqSection = () => {
                 </div>
               )}
             </React.Fragment>
-          ))}
+          ))
+          ) : (
+            <div className="text-center py-12 border-2 border-black bg-gray-50 brutal-shadow mt-4">
+              <div className="font-bold text-xl mb-2">Ничего не найдено</div>
+              <div className="text-gray-600 mb-6 font-medium">Попробуйте изменить поисковый запрос</div>
+              <Button variant="primary" onClick={() => {
+                setSearchQuery('');
+                document.getElementById('contacts')?.scrollIntoView({ behavior: 'smooth' });
+              }}>
+                ЗАДАТЬ ВОПРОС НАПРЯМУЮ
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </section>

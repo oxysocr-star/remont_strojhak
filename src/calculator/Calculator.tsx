@@ -3,13 +3,29 @@ import { motion, animate, useMotionValue, useTransform, AnimatePresence } from '
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import html2canvas from 'html2canvas-pro';
 import { jsPDF } from 'jspdf';
-import { Download } from 'lucide-react';
+import { toast } from 'react-hot-toast';
+import { Download, Search } from 'lucide-react';
 import { useCalculatorStore } from '../store';
 import { Button } from '../components/ui/Button';
 import { trackEvent } from '../lib/analytics';
 
 const rates = { basic: 12000, comfort: 25000, premium: 45000 };
 const multipliers = { newBuilding: 1, secondary: 1.15, demolition: 1.25, afterBadContractor: 1.35 };
+
+const faqsData = [
+  {
+    question: "Эта цена окончательная?",
+    answer: "Калькулятор дает предварительный расчет. Точная стоимость фиксируется только после выезда инженера и составления подробной сметы."
+  },
+  {
+    question: "Как происходит оплата?",
+    answer: "Поэтапно. Вы платите только за фактически выполненные работы после их приемки. Никаких авансов за работы."
+  },
+  {
+    question: "Что делать после получения сметы?",
+    answer: "Запишитесь на замер. Наш инженер приедет к вам на объект для точного замера, после чего мы составим детальную смету, которая станет частью договора."
+  }
+];
 
 function AnimatedCounter({ value }: { value: number }) {
   const count = useMotionValue(value);
@@ -94,28 +110,12 @@ export const Calculator = () => {
   const resultRef = React.useRef<HTMLDivElement>(null);
   const [pdfPreview, setPdfPreview] = React.useState<string | null>(null);
   const [isGeneratingPreview, setIsGeneratingPreview] = React.useState(false);
+  const [faqSearchQuery, setFaqSearchQuery] = React.useState('');
 
-  const drawWatermark = (canvas: HTMLCanvasElement) => {
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      ctx.save();
-      ctx.translate(canvas.width / 2, canvas.height / 2);
-      ctx.rotate(-Math.PI / 6); // -30 degrees
-      const fontSize = Math.floor(canvas.width / 8);
-      ctx.font = `bold ${fontSize}px sans-serif`;
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      
-      const gap = canvas.height / 4;
-      ctx.fillText('СТРОЙХАК', 0, -gap * 2);
-      ctx.fillText('СТРОЙХАК', 0, -gap);
-      ctx.fillText('СТРОЙХАК', 0, 0);
-      ctx.fillText('СТРОЙХАК', 0, gap);
-      ctx.fillText('СТРОЙХАК', 0, gap * 2);
-      ctx.restore();
-    }
-  };
+  const filteredFaqs = faqsData.filter(faq => 
+    faq.question.toLowerCase().includes(faqSearchQuery.toLowerCase()) || 
+    faq.answer.toLowerCase().includes(faqSearchQuery.toLowerCase())
+  );
 
   const handleGeneratePreview = async () => {
     if (!resultRef.current) return;
@@ -126,7 +126,6 @@ export const Calculator = () => {
         useCORS: true,
         logging: false
       });
-      drawWatermark(canvas);
       setPdfPreview(canvas.toDataURL('image/png'));
     } catch (e) {
       console.error(e);
@@ -143,7 +142,6 @@ export const Calculator = () => {
         useCORS: true,
         logging: false
       });
-      drawWatermark(canvas);
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF({
         orientation: 'p',
@@ -213,10 +211,12 @@ export const Calculator = () => {
         body: JSON.stringify({ phone, propertyType, area, objectType, tariff, timeframe })
       });
       if (!res.ok) throw new Error();
-      setStatus('success');
+      setStatus('idle');
+      toast.success('Заявка отправлена! Ожидайте звонка.');
       target.reset();
     } catch(e) {
-      setStatus('error');
+      setStatus('idle');
+      toast.error('Произошла ошибка, попробуйте позднее.');
     }
   };
 
@@ -378,8 +378,18 @@ export const Calculator = () => {
             
             {step === 6 && timeframe && (
               <div className="animate-in fade-in slide-in-from-bottom-4">
-                <div className="p-6 bg-gray-100 border-2 border-black" ref={resultRef}>
-                  <h4 className="font-bold uppercase text-sm mb-4 text-gray-500">Результат расчета</h4>
+                <div className="p-6 bg-gray-100 border-2 border-black relative overflow-hidden z-0" ref={resultRef}>
+                  <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-center space-y-12 sm:space-y-24 whitespace-nowrap overflow-hidden translate-x-[-10%] translate-y-[-10%] w-[120%] h-[120%] -rotate-[30deg] opacity-[0.06] select-none text-black font-black text-6xl sm:text-8xl md:text-9xl z-[-1]">
+                    <div>СТРОЙХАК СТРОЙХАК СТРОЙХАК СТРОЙХАК СТРОЙХАК СТРОЙХАК</div>
+                    <div>СТРОЙХАК СТРОЙХАК СТРОЙХАК СТРОЙХАК СТРОЙХАК СТРОЙХАК</div>
+                    <div>СТРОЙХАК СТРОЙХАК СТРОЙХАК СТРОЙХАК СТРОЙХАК СТРОЙХАК</div>
+                    <div>СТРОЙХАК СТРОЙХАК СТРОЙХАК СТРОЙХАК СТРОЙХАК СТРОЙХАК</div>
+                    <div>СТРОЙХАК СТРОЙХАК СТРОЙХАК СТРОЙХАК СТРОЙХАК СТРОЙХАК</div>
+                    <div>СТРОЙХАК СТРОЙХАК СТРОЙХАК СТРОЙХАК СТРОЙХАК СТРОЙХАК</div>
+                    <div>СТРОЙХАК СТРОЙХАК СТРОЙХАК СТРОЙХАК СТРОЙХАК СТРОЙХАК</div>
+                  </div>
+                  <div className="relative z-10 w-full h-full bg-transparent">
+                    <h4 className="font-bold uppercase text-sm mb-4 text-gray-500">Результат расчета</h4>
                   <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-4 mb-6">
                     <div>
                       <div className="text-sm font-bold uppercase mb-1">Предварительная стоимость</div>
@@ -452,19 +462,26 @@ export const Calculator = () => {
 
                   <div className="mb-8 border-t-2 border-black pt-6 print:hidden" data-html2canvas-ignore="true">
                     <h5 className="font-bold uppercase text-sm mb-4">Частые вопросы по смете</h5>
+                    <div className="relative mb-4">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                      <input 
+                        type="text" 
+                        placeholder="Найти ответ..." 
+                        value={faqSearchQuery}
+                        onChange={(e) => setFaqSearchQuery(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2 border-2 border-black font-medium focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-black"
+                      />
+                    </div>
                     <div className="space-y-3">
-                      <FaqItem 
-                        question="Эта цена окончательная?"
-                        answer="Калькулятор дает предварительный расчет. Точная стоимость фиксируется только после выезда инженера и составления подробной сметы."
-                      />
-                      <FaqItem 
-                        question="Как происходит оплата?"
-                        answer="Поэтапно. Вы платите только за фактически выполненные работы после их приемки. Никаких авансов за работы."
-                      />
-                      <FaqItem 
-                        question="Что делать после получения сметы?"
-                        answer="Запишитесь на замер. Наш инженер приедет к вам на объект для точного замера, после чего мы составим детальную смету, которая станет частью договора."
-                      />
+                      {filteredFaqs.length > 0 ? (
+                        filteredFaqs.map((faq, index) => (
+                          <FaqItem key={index} question={faq.question} answer={faq.answer} />
+                        ))
+                      ) : (
+                        <p className="text-gray-500 font-medium py-4 text-center border-2 border-dashed border-gray-300">
+                          Ничего не найдено. Попробуйте другой запрос.
+                        </p>
+                      )}
                     </div>
                   </div>
 
@@ -474,16 +491,6 @@ export const Calculator = () => {
                     <label htmlFor="calc-phone-input" className="block text-sm font-bold uppercase mb-2">Куда прислать смету?</label>
                     <input id="calc-phone-input" type="tel" placeholder="+7 (999) 000-00-00" aria-label="Номер телефона для получения сметы" className="w-full p-4 border-2 border-black font-bold mb-4 bg-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-black" required 
                            onChange={() => trackEvent('contact_form_started', { source: 'calculator' })} />
-                    {status === 'error' && (
-                      <div className="text-red-600 font-bold mb-4 text-sm" role="alert">
-                        Произошла ошибка, попробуйте позднее.
-                      </div>
-                    )}
-                    {status === 'success' && (
-                      <div className="text-green-700 font-bold mb-4 text-sm bg-green-100 p-2 border-2 border-green-700" role="alert">
-                        Заявка отправлена! Ожидайте звонка.
-                      </div>
-                    )}
                     <Button type="submit" variant="primary" className="w-full" disabled={status === 'loading'}>
                       {status === 'loading' ? 'ОТПРАВЛЯЕМ...' : 'ПОЛУЧИТЬ ТОЧНУЮ СМЕТУ'}
                     </Button>
@@ -494,6 +501,7 @@ export const Calculator = () => {
                       СОХРАНИТЬ В PDF
                     </Button>
                     <button onClick={reset} className="text-xs uppercase font-bold underline opacity-50 whitespace-nowrap">Начать заново</button>
+                  </div>
                   </div>
                 </div>
               </div>

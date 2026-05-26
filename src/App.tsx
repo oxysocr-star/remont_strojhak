@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Toaster } from 'react-hot-toast';
 import { HeroSection } from './sections/HeroSection';
 import { TrustSection, ProblemsSection, ProcessSection, TariffsSection } from './sections/index';
 import { Calculator } from './calculator/Calculator';
@@ -41,6 +42,28 @@ export default function App() {
       <Footer />
       <MobileBottomNav />
       <ScrollToTop />
+      <Toaster 
+        position="bottom-right" 
+        toastOptions={{ 
+          style: { 
+            border: '2px solid black', 
+            borderRadius: '0', 
+            fontWeight: 'bold',
+            background: '#ffffff',
+            color: '#000000',
+          },
+          success: {
+            style: {
+              background: '#D5FF00',
+            }
+          },
+          error: {
+            style: {
+              background: '#ffcccc',
+            }
+          }
+        }} 
+      />
     </div>
   );
 }

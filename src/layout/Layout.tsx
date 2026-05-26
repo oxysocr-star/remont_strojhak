@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-hot-toast';
 import { motion } from 'motion/react';
 import { Button } from '../components/ui/Button';
 import { trackEvent } from '../lib/analytics';
-import { Copy, Check } from 'lucide-react';
+import { Copy, Check, MapPin, Phone, Send } from 'lucide-react';
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -171,10 +172,12 @@ export const ContactsSection = () => {
                   body: JSON.stringify({ name: target['name'].value, phone: target['phone'].value })
                 });
                 if (!res.ok) throw new Error();
-                setStatus('success');
+                setStatus('idle');
+                toast.success('Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.');
                 target.reset();
               } catch(error) {
-                setStatus('error');
+                setStatus('idle');
+                toast.error('Произошла ошибка, пожалуйста, попробуйте позднее.');
               }
             }}>
               <div className="text-left w-full">
@@ -187,16 +190,6 @@ export const ContactsSection = () => {
                 <input id="phone-input" name="phone" type="tel" placeholder="+7 (999) 000-00-00" aria-label="Телефон" className="w-full p-4 border-2 border-black font-bold focus:bg-[#D5FF00]/10 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-black" required 
                   onChange={() => trackEvent('contact_form_started', { source: 'footer_contacts' })} />
               </div>
-              {status === 'error' && (
-                <div className="text-red-600 font-bold text-center mt-2" role="alert">
-                  Произошла ошибка, пожалуйста, попробуйте позднее.
-                </div>
-              )}
-              {status === 'success' && (
-                <div className="text-green-700 font-bold text-center mt-2 p-2 bg-green-100 border-2 border-green-700" role="alert">
-                  Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.
-                </div>
-              )}
               <Button size="lg" type="submit" className="mt-2" disabled={status === 'loading'}>
                 {status === 'loading' ? 'ОТПРАВЛЯЕМ...' : 'ОСТАВИТЬ ЗАЯВКУ'}
               </Button>
@@ -208,13 +201,44 @@ export const ContactsSection = () => {
 };
 
 export const Footer = () => (
-  <footer className="bg-black text-white py-12 border-t-4 border-[#D5FF00]">
-    <div className="container flex flex-col md:flex-row justify-between items-center gap-6">
-      <div className="text-2xl font-bold font-display uppercase tracking-tighter">
-        СТРОЙ<span className="text-[#D5FF00]">ХАК</span>
+  <footer className="bg-black text-white py-12 border-t-4 border-[#D5FF00] overflow-hidden">
+    <div className="container flex flex-col md:flex-row justify-between items-start md:items-center gap-10">
+      <div className="flex flex-col gap-6 w-full md:w-auto">
+        <div className="text-3xl font-bold font-display uppercase tracking-tighter">
+          СТРОЙ<span className="text-[#D5FF00]">ХАК</span>
+        </div>
+        
+        <div className="flex flex-col gap-3 text-sm opacity-80">
+          <div className="flex items-center gap-3">
+            <MapPin className="w-5 h-5 text-[#D5FF00]" />
+            <span>г. Москва, ул. Примерная, д. 10</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <Phone className="w-5 h-5 text-[#D5FF00]" />
+            <div className="flex flex-col font-medium">
+              <a href="tel:+79990000000" className="hover:text-[#D5FF00] transition-colors">+7 (999) 000-00-00</a>
+              <a href="tel:+78000000000" className="hover:text-[#D5FF00] transition-colors">+7 (800) 000-00-00</a>
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="text-sm font-medium opacity-50 uppercase tracking-widest text-center md:text-right">
-        2024 © Все права защищены. <br/> Ремонт квартир под ключ.
+
+      <div className="flex flex-col md:items-end gap-6 w-full md:w-auto mt-4 md:mt-0">
+        <div className="flex gap-4">
+          <a href="#" className="flex items-center justify-center w-12 h-12 rounded-full border-2 border-white/20 hover:bg-[#D5FF00] hover:text-black hover:border-[#D5FF00] transition-all" aria-label="Telegram" title="Telegram">
+            <Send className="w-5 h-5 ml-[-2px]" />
+          </a>
+          <a href="#" className="flex items-center justify-center w-12 h-12 rounded-full border-2 border-white/20 hover:bg-[#D5FF00] hover:text-black hover:border-[#D5FF00] transition-all" aria-label="ВКонтакте" title="ВКонтакте">
+            <span className="font-bold text-sm tracking-tighter">VK</span>
+          </a>
+          <a href="#" className="flex items-center justify-center w-12 h-12 rounded-full border-2 border-white/20 hover:bg-[#D5FF00] hover:text-black hover:border-[#D5FF00] transition-all" aria-label="Макс" title="Макс">
+            <span className="font-bold text-lg leading-none">M</span>
+          </a>
+        </div>
+        
+        <div className="text-sm font-medium opacity-50 uppercase tracking-widest md:text-right">
+          2024 © Все права защищены. <br className="hidden md:block" /> Ремонт квартир под ключ.
+        </div>
       </div>
     </div>
   </footer>
